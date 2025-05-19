@@ -32,7 +32,7 @@ data "aws_key_pair" "example_key" {
 
 # EC2 instance using default VPC and subnet
 resource "aws_instance" "example_ec2" {
-  ami           = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2 AMI
+  ami           = "ami-084568db4383264d4"  # Amazon Linux 2 AMI
   instance_type = "t2.micro"
   subnet_id     = element(data.aws_subnets.default.ids, 0)  # First default subnet
   security_groups = ["default"]  # Use default security group

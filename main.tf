@@ -1,5 +1,3 @@
-#ec2
-
 terraform {
   required_providers {
     aws = {
@@ -14,83 +12,30 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_vpc" "example_vpc" {
-  cidr_block           = "10.0.0.0/16"
-  enable_dns_support   = true
-  enable_dns_hostnames = true
-  tags = {
-    Name = "example-vpc"
-  }
+# Use the default VPC
+data "aws_vpc" "default" {
+  default = true
 }
 
-resource "aws_subnet" "example_subnet" {
-  vpc_id                 = aws_vpc.example_vpc.id
-  cidr_block             = "10.0.1.0/24"
-  map_public_ip_on_launch = true
-  availability_zone      = "us-east-1a"
-  tags = {
-    Name = "example-subnet"
-  }
+# Get the default subnet from the default VPC
+data "aws_subnet_ids" "default" {
+  vpc_id = data.aws_vpc.default.id
 }
 
-resource "aws_security_group" "example_sg" {
-  vpc_id = aws_vpc.example_vpc.id
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "example-sg"
-  }
-}
-
-resource "tls_private_key" "example_key" {
-  algorithm = "RSA"
-  rsa_bits  = 2048
-}
-
+# Use an existing key pair
 resource "aws_key_pair" "example_key" {
-  key_name   = "example-key"
-  public_key = tls_private_key.example_key.public_key_openssh
+  key_name = "example-key"
 }
 
+# EC2 instance using default VPC and subnet
 resource "aws_instance" "example_ec2" {
-  ami             = "ami-084568db4383264d4"  # Amazon Linux 2 AMI
+  ami             = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2 AMI
   instance_type   = "t2.micro"
-  subnet_id       = aws_subnet.example_subnet.id
-  security_groups = [aws_security_group.example_sg.name]
+  subnet_id       = element(data.aws_subnet_ids.default.ids, 0)  # First default subnet
+  security_groups = ["default"]  # Use default security group
   key_name        = aws_key_pair.example_key.key_name
 
   tags = {
     Name = "example-ec2-instance"
   }
-}
-
-output "public_key" {
-  description = "Public key for SSH access"
-  value       = tls_private_key.example_key.public_key_openssh
-}
-
-output "private_key" {
-  description = "Private key for SSH access"
-  value       = tls_private_key.example_key.private_key_pem
-  sensitive   = true
 }

@@ -68,10 +68,11 @@ jobs:
 
       # Download Plan File
       - name: Download Terraform Plan
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3.0.1
         with:
           name: tfplan
           path: .
+
 
       # Configure AWS credentials
       - name: Configure AWS credentials

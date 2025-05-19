@@ -12,7 +12,6 @@ provider "aws" {
   region                  = "us-east-1"
   skip_credentials_validation = true
 }
-
 resource "aws_s3_bucket" "example" {
   bucket = "my-terraform-bucket-${random_id.bucket_id.hex}"
 }

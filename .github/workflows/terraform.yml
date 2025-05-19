@@ -13,19 +13,31 @@ jobs:
     if: github.event_name == 'pull_request'
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: 1.5.0
+      # Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AKIA6JQ45APXDWOSURVD }}
+          aws-secret-access-key: ${{ secrets.YzrHw+k8TWUYqaYkMGh7LP2+BLvyQjB1sZnO/0+v }}
+          
 
-    - name: Terraform Init
-      run: terraform init
+      # Set up Terraform
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
 
-    - name: Terraform Plan
-      run: terraform plan -out=tfplan
+      # Terraform Init
+      - name: Terraform Init
+        run: terraform init
+
+      # Terraform Plan
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
 
   terraform-apply:
     name: Terraform Apply
@@ -36,17 +48,29 @@ jobs:
       name: production
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Terraform
-      uses: hashicorp/setup-terraform@v2
-      with:
-        terraform_version: 1.5.0
+      # Configure AWS credentials
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-    - name: Terraform Init
-      run: terraform init
+      # Set up Terraform
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
 
-    - name: Terraform Apply
-      run: terraform apply -auto-approve tfplan
-      if: ${{ github.event_name == 'workflow_dispatch' }}
+      # Terraform Init
+      - name: Terraform Init
+        run: terraform init
+
+      # Terraform Apply (manual approval via workflow_dispatch)
+      - name: Terraform Apply
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: terraform apply -auto-approve tfplan

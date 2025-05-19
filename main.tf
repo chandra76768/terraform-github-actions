@@ -27,7 +27,7 @@ data "aws_subnets" "default" {
 
 # Create a new security group in the default VPC
 resource "aws_security_group" "defa" {
-  name        = "def"
+  name        = "defa"
   description = "Security group def for example EC2"
   vpc_id      = data.aws_vpc.default.id
 

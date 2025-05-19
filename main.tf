@@ -26,8 +26,8 @@ data "aws_subnets" "default" {
 }
 
 # Create a new security group in the default VPC
-resource "aws_security_group" "defa" {
-  name        = "defa"
+resource "aws_security_group" "defau" {
+  name        = "defau"
   description = "Security group def for example EC2"
   vpc_id      = data.aws_vpc.default.id
 
@@ -53,7 +53,7 @@ resource "aws_security_group" "defa" {
   }
 
   tags = {
-    Name = "def"
+    Name = "defau"
   }
 }
 
@@ -67,7 +67,7 @@ resource "aws_instance" "example_ec2" {
   ami                  = "ami-084568db4383264d4"  # Amazon Linux 2 AMI
   instance_type        = "t2.micro"
   subnet_id            = element(data.aws_subnets.default.ids, 0)
-  vpc_security_group_ids = [aws_security_group.defa.id]
+  vpc_security_group_ids = [aws_security_group.defau.id]
   key_name             = data.aws_key_pair.example_key.key_name
 
   tags = {

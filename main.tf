@@ -9,9 +9,9 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-west-1"
+  region = "us-west-1"  # Replace with your region
+  profile = "default"   # Replace if using a specific profile
 }
-
 resource "aws_s3_bucket" "example" {
   bucket = "my-terraform-bucket-${random_id.bucket_id.hex}"
 }

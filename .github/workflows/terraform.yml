@@ -45,7 +45,7 @@ jobs:
     needs: terraform-plan
     if: github.event.pull_request.merged == true
     environment:
-      name: production
+      name: prod1
 
     permissions:
       id-token: write

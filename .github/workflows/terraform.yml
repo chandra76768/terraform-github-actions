@@ -1,11 +1,10 @@
 name: Terraform Workflow
 
-on:
   pull_request:
-    branches:
-      - main
-  workflow_dispatch:
-
+    branches: [main]
+  push:
+    branches: [main]
+ 
 jobs:
   terraform-plan:
     name: Terraform Plan
@@ -46,7 +45,7 @@ jobs:
     needs: terraform-plan
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
-      name: production
+      name: prod1
 
     steps:
       # Checkout code

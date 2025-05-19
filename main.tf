@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "~> 4.0"
     }
   }
@@ -25,30 +25,49 @@ data "aws_subnets" "default" {
   }
 }
 
-# Get the security group named "def" within the default VPC
-data "aws_security_group" "def" {
-  filter {
-    name   = "group-name"
-    values = ["def"]
+# Create a new security group in the default VPC
+resource "aws_security_group" "def" {
+  name        = "def"
+  description = "Security group def for example EC2"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Allow SSH from anywhere (adjust for your security)
   }
 
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.default.id]
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Allow HTTP from anywhere
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]  # Allow all outbound
+  }
+
+  tags = {
+    Name = "def"
   }
 }
 
-# Use an existing key pair (no resource creation, just reference)
+# Use an existing key pair
 data "aws_key_pair" "example_key" {
   key_name = "example-key"
 }
 
-# EC2 instance using default VPC and subnet
+# EC2 instance using default VPC, subnet, and new security group
 resource "aws_instance" "example_ec2" {
   ami                  = "ami-084568db4383264d4"  # Amazon Linux 2 AMI
   instance_type        = "t2.micro"
   subnet_id            = element(data.aws_subnets.default.ids, 0)  # First default subnet
-  security_group_ids   = [data.aws_security_group.def.id]  # Use security group ID
+  security_group_ids   = [aws_security_group.def.id]  # Use new security group
   key_name             = data.aws_key_pair.example_key.key_name
 
   tags = {

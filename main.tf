@@ -71,7 +71,7 @@ resource "aws_key_pair" "example_key" {
 }
 
 resource "aws_instance" "example_ec2" {
-  ami             = "ami-0c55b159cbfafe1f0"  # Amazon Linux 2 AMI
+  ami             = "ami-084568db4383264d4"  # Amazon Linux 2 AMI
   instance_type   = "t2.micro"
   subnet_id       = aws_subnet.example_subnet.id
   security_groups = [aws_security_group.example_sg.name]

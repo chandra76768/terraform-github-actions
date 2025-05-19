@@ -1,3 +1,4 @@
+#terra
 name: Terraform Workflow
 
 on:
@@ -13,7 +14,6 @@ jobs:
   terraform-plan:
     name: Terraform Plan
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
 
     steps:
       # Checkout code
@@ -77,6 +77,10 @@ jobs:
       # Terraform Init
       - name: Terraform Init
         run: terraform init
+
+      # Terraform Plan (before applying)
+      - name: Terraform Plan (Post Merge)
+        run: terraform plan -out=tfplan
 
       # Terraform Apply
       - name: Terraform Apply

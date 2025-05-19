@@ -1,4 +1,5 @@
 #this codev is updted
+
 name: Terraform Workflow
 
 on:
@@ -34,7 +35,7 @@ jobs:
     needs: terraform-plan
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
-      name: production
+      name: prod1
 
     steps:
     - name: Checkout code

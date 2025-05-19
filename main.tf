@@ -13,8 +13,8 @@ provider "aws" {
 }
 
 resource "aws_vpc" "example_vpc" {
-  cidr_block = "10.0.0.0/16"
-  enable_dns_support = true
+  cidr_block           = "10.0.0.0/16"
+  enable_dns_support   = true
   enable_dns_hostnames = true
   tags = {
     Name = "example-vpc"
@@ -22,10 +22,10 @@ resource "aws_vpc" "example_vpc" {
 }
 
 resource "aws_subnet" "example_subnet" {
-  vpc_id            = aws_vpc.example_vpc.id
-  cidr_block        = "10.0.1.0/24"
+  vpc_id                 = aws_vpc.example_vpc.id
+  cidr_block             = "10.0.1.0/24"
   map_public_ip_on_launch = true
-  availability_zone = "us-east-1a"
+  availability_zone      = "us-east-1a"
   tags = {
     Name = "example-subnet"
   }
@@ -60,9 +60,14 @@ resource "aws_security_group" "example_sg" {
   }
 }
 
+resource "tls_private_key" "example_key" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
 resource "aws_key_pair" "example_key" {
   key_name   = "example-key"
-  public_key = file("~/.ssh/id_rsa.pub")
+  public_key = tls_private_key.example_key.public_key_openssh
 }
 
 resource "aws_instance" "example_ec2" {
@@ -75,4 +80,15 @@ resource "aws_instance" "example_ec2" {
   tags = {
     Name = "example-ec2-instance"
   }
+}
+
+output "public_key" {
+  description = "Public key for SSH access"
+  value       = tls_private_key.example_key.public_key_openssh
+}
+
+output "private_key" {
+  description = "Private key for SSH access"
+  value       = tls_private_key.example_key.private_key_pem
+  sensitive   = true
 }

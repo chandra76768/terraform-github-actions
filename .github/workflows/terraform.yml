@@ -41,13 +41,6 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
-      # Upload the Terraform plan as an artifact
-      - name: Upload Terraform Plan
-        uses: actions/upload-artifact@v3
-        with:
-          name: tfplan
-          path: tfplan
-
   terraform-apply:
     name: Terraform Apply
     runs-on: ubuntu-latest
@@ -80,15 +73,13 @@ jobs:
         with:
           terraform_version: 1.5.0
 
-      # Download Terraform Plan
-      - name: Download Terraform Plan
-        uses: actions/download-artifact@v3
-        with:
-          name: tfplan
-
       # Terraform Init
       - name: Terraform Init
         run: terraform init
+
+      # Terraform Plan (before applying)
+      - name: Terraform Plan (Post Merge)
+        run: terraform plan -out=tfplan
 
       # Terraform Apply
       - name: Terraform Apply

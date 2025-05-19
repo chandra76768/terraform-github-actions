@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - main
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -42,10 +45,9 @@ jobs:
   terraform-apply:
     name: Terraform Apply
     runs-on: ubuntu-latest
-    needs: terraform-plan
-    if: github.event.pull_request.merged == true
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
-      name: prod1
+      name: production
 
     permissions:
       id-token: write
@@ -56,21 +58,6 @@ jobs:
       # Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
-
-      # Require manual approval before merging
-      - name: Check for PR approval
-        id: check_approval
-        run: |
-          gh pr view ${{ github.event.number }} --json reviews -q '.reviews[] | select(.state == "APPROVED")'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Fail if no approval is found
-      - name: Ensure PR is approved
-        if: ${{ steps.check_approval.outputs.result == '' }}
-        run: |
-          echo "Error: PR has not been approved."
-          exit 1
 
       # Configure AWS credentials
       - name: Configure AWS credentials

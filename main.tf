@@ -35,7 +35,7 @@ resource "aws_instance" "example_ec2" {
   ami           = "ami-084568db4383264d4"  # Amazon Linux 2 AMI
   instance_type = "t2.micro"
   subnet_id     = element(data.aws_subnets.default.ids, 0)  # First default subnet
-  security_groups = "def" # Use default security group
+  security_groups = ["def"] # Use default security group
   key_name      = data.aws_key_pair.example_key.key_name
 
   tags = {

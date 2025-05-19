@@ -75,8 +75,3 @@ resource "aws_instance" "example_ec2" {
   }
 }
 
-
-  tags = {
-    Name = "example-ec2-instance"
-  }
-}

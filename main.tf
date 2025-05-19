@@ -67,7 +67,7 @@ resource "aws_instance" "example_ec2" {
   ami                  = "ami-084568db4383264d4"  # Amazon Linux 2 AMI
   instance_type        = "t2.micro"
   subnet_id            = element(data.aws_subnets.default.ids, 0)
-  vpc_security_group_ids = [aws_security_group.def.id]
+  vpc_security_group_ids = [aws_security_group.defa.id]
   key_name             = data.aws_key_pair.example_key.key_name
 
   tags = {

@@ -1,4 +1,4 @@
-#terra
+#terraform
 name: Terraform Workflow
 
 on:

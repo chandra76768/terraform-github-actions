@@ -1,3 +1,4 @@
+#terraform
 terraform {
   required_providers {
     aws = {
@@ -63,7 +64,7 @@ data "aws_key_pair" "example_key" {
 }
 
 # EC2 instance using default VPC, subnet, and new security group
-resource "aws_instance" "example_ec21" {
+resource "aws_instance" "example_ec212" {
   ami                  = "ami-084568db4383264d4"  # Amazon Linux 2 AMI
   instance_type        = "t2.micro"
   subnet_id            = element(data.aws_subnets.default.ids, 0)
@@ -71,6 +72,6 @@ resource "aws_instance" "example_ec21" {
   key_name             = data.aws_key_pair.example_key.key_name
 
   tags = {
-    Name = "example-ec21-instance"
+    Name = "example-ec212-instance"
   }
 }

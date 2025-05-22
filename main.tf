@@ -1,3 +1,32 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
+  }
+  required_version = ">= 1.5.0"
+}
+
+provider "aws" {
+  region = "us-east-1"
+}
+
+data "aws_vpc" "default" {
+  default = true
+}
+
+data "aws_subnets" "default" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
+}
+
+data "aws_key_pair" "example_key" {
+  key_name = "example-key"
+}
+
 resource "aws_security_group" "de" {
   name        = "de"
   description = "Security group def for example EC2"
@@ -29,31 +58,13 @@ resource "aws_security_group" "de" {
   }
 }
 
-locals {
-  ec2_instances = {
-    abc = {
-      ami            = "ami-084568db4383264d4"
-      instance_type  = "t2.micro"
-      subnet_index   = 0
-      instance_name  = "abc"
-    },
-    abc2 = {
-      ami            = "ami-084568db4383264d4"
-      instance_type  = "t2.micro"
-      subnet_index   = 1
-      instance_name  = "abc2"
-    }
-  }
-}
+module "ec2_instance" {
+  source = "./modules/ec2"
 
-module "ec2_instances" {
-  source  = "./modules/ec2"
-  for_each = local.ec2_instances
-
-  ami                = each.value.ami
-  instance_type      = each.value.instance_type
-  subnet_id          = element(data.aws_subnets.default.ids, each.value.subnet_index)
+  ami                = "ami-084568db4383264d4"
+  instance_type      = "t2.micro"
+  subnet_id          = element(data.aws_subnets.default.ids, 0)
   security_group_ids = [aws_security_group.de.id]
   key_name           = data.aws_key_pair.example_key.key_name
-  instance_name      = each.value.instance_name
+  instance_name      = "abc"
 }

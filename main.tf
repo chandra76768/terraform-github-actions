@@ -36,12 +36,6 @@ locals {
       instance_type  = "t2.micro"
       subnet_index   = 0
       instance_name  = "abc"
-    },
-    abc2 = {
-      ami            = "ami-084568db4383264d4"
-      instance_type  = "t2.micro"
-      subnet_index   = 1
-      instance_name  = "abc2"
     }
   }
 }

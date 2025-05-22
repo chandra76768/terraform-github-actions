@@ -1,29 +1,29 @@
 variable "ami" {
-  description = "AMI ID"
   type        = string
+  description = "AMI ID for the instance"
 }
 
 variable "instance_type" {
-  description = "EC2 instance type"
   type        = string
+  description = "EC2 instance type"
 }
 
 variable "subnet_id" {
-  description = "Subnet ID"
   type        = string
+  description = "Subnet ID"
 }
 
 variable "security_group_ids" {
-  description = "List of security group IDs"
   type        = list(string)
+  description = "List of security group IDs"
 }
 
 variable "key_name" {
-  description = "Key pair name"
   type        = string
+  description = "Name of the key pair"
 }
 
 variable "instance_name" {
-  description = "Name tag for the instance"
   type        = string
+  description = "Name tag for the instance"
 }

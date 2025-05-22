@@ -1,9 +1,18 @@
-### Root Module - main.tf
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
+  }
+  required_version = ">= 1.5.0"
+}
 
 provider "aws" {
   region = "us-east-1"
 }
 
+# Use default VPC
 data "aws_vpc" "default" {
   default = true
 }
@@ -21,7 +30,7 @@ data "aws_key_pair" "example_key" {
 
 resource "aws_security_group" "de" {
   name        = "de"
-  description = "Security group def for example EC2"
+  description = "Security group for EC2"
   vpc_id      = data.aws_vpc.default.id
 
   ingress {
@@ -57,24 +66,5 @@ module "example_ec2" {
   subnet_id          = element(data.aws_subnets.default.ids, 0)
   security_group_ids = [aws_security_group.de.id]
   key_name           = data.aws_key_pair.example_key.key_name
-  instance_name      = "example-single-instance"
+  instance_name      = "example-ec21-instance"
 }
-
-### Root Module - variables.tf (optional)
-# No variables needed at root since values are hardcoded in main.tf
-
-
-### Module - modules/ec2/main.tf
-
-resource "aws_instance" "this" {
-  ami                    = var.ami
-  instance_type          = var.instance_type
-  subnet_id              = var.subnet_id
-  vpc_security_group_ids = var.security_group_ids
-  key_name               = var.key_name
-
-  tags = {
-    Name = var.instance_name
-  }
-}
-
